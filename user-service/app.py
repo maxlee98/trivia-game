@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from flasgger import Swagger
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -26,8 +27,8 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-@app.route('/register', methods=['POST'])
-def register():
+@app.route('/api/register', methods=['POST'])
+def register_user():
     """
     User Registration
     ---
@@ -47,12 +48,22 @@ def register():
         description: Username already exists.
     """
     data = request.get_json()
-    new_user = User(username=data['username'], password=data['password'])  # Password hashing should be added
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'User registered successfully'}), 201
 
-@app.route('/login', methods=['POST'])
+    if not data or not all(k in data for k in ("username", "password")):
+        return jsonify({"message": "Missing data"}), 400
+    
+    new_user = User(username=data['username'], password=data['password'])  # Password hashing should be added
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "User registered successfully!"}), 201
+    
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"message": "User with that username or email already exists"}), 409
+
+
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     user = User.query.filter_by(username=data['username'], password=data['password']).first()  # Password checking should be added
@@ -60,6 +71,14 @@ def login():
         access_token = create_access_token(identity={'username': user.username})
         return jsonify(access_token=access_token), 200
     return jsonify({'message': 'Invalid credentials'}), 401
+
+
+# Endpoint to get all users
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    users_data = [{"id": user.id, "username": user.username, "password": user.password} for user in users]
+    return jsonify(users_data)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
