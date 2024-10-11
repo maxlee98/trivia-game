@@ -1,9 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flasgger import Swagger
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@localhost/trivia_game'
+swagger = Swagger(app)
+# Local Host
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@localhost/trivia_game'
+
+# Docker Compose
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@postgres:5432/trivia_game'
 db = SQLAlchemy(app)
 
 class Game(db.Model):

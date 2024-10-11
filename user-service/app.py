@@ -5,8 +5,12 @@ from flasgger import Swagger
 
 app = Flask(__name__)
 swagger = Swagger(app)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost/trivia_game'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@localhost/trivia_game'
+
+# Local Host
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@localhost/trivia_game'
+
+# Docker Compose
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@postgres:5432/trivia_game'
 
 app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'  # Change this!
 

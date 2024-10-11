@@ -1,0 +1,30 @@
+services:
+  user-service:
+    build:
+      context: ./user-service
+    ports:
+      - "5001:5000"
+    depends_on:
+      - postgres
+  
+  game-service:
+    build:
+      context: ./game-service
+    ports:
+      - "5002:5000"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: trivia_game
+      POSTGRES_USER: new_user
+      POSTGRES_PASSWORD: new_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
