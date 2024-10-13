@@ -2,6 +2,8 @@ services:
   user-service:
     build:
       context: ./user-service
+    volumes:
+      - .env:/app/.env   # Mount the .env file into the container
     ports:
       - "5001:5001"
     depends_on:
@@ -13,6 +15,8 @@ services:
   game-service:
     build:
       context: ./game-service
+    volumes:
+      - .env:/app/.env  # Mount the .env file into the container
     ports:
       - "5002:5002"
     depends_on:

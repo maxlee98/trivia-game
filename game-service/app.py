@@ -3,14 +3,26 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import Swagger
 from prometheus_flask_exporter import PrometheusMetrics
+from dotenv import load_dotenv
+import os
+
+# env_path = '../.env' # Local Testing
+env_path = '.env' # Docker Container
+load_dotenv(env_path)  # Load environment variables from the .env file
+
+# Now you can access your variables
+postgres_user = os.getenv('DB_USERNAME')
+postgres_password = os.getenv('DB_PASSWORD')
 
 app = Flask(__name__)
 swagger = Swagger(app)
 # Local Host
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@localhost/trivia_game'
 
+
 # Docker Compose
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@postgres:5432/trivia_game'
+SQLALCHEMY_DATABASE_URI = f'postgresql://{postgres_user}:{postgres_password}@postgres:5432/trivia_game'
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 db = SQLAlchemy(app)
 
 # Enable Prometheus Metrics

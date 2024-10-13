@@ -4,6 +4,20 @@ from flask_jwt_extended import JWTManager, create_access_token
 from flasgger import Swagger
 from sqlalchemy.exc import IntegrityError
 from prometheus_flask_exporter import PrometheusMetrics
+from dotenv import load_dotenv
+import os
+
+# env_path = '../.env' # Local Testing
+env_path = '.env' # Docker Container
+load_dotenv(env_path)  # Load environment variables from the .env file
+
+# Now you can access your variables
+postgres_user = os.getenv('DB_USERNAME')
+postgres_password = os.getenv('DB_PASSWORD')
+
+print("Postgres User:", postgres_user)
+print("Postgres Password:", postgres_password)
+
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -12,7 +26,9 @@ swagger = Swagger(app)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@localhost/trivia_game'
 
 # Docker Compose
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@postgres:5432/trivia_game'
+SQLALCHEMY_DATABASE_URI = f'postgresql://{postgres_user}:{postgres_password}@postgres:5432/trivia_game'
+print(SQLALCHEMY_DATABASE_URI)
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 
 
 app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'  # Change this!

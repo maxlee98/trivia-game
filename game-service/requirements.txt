@@ -4,3 +4,4 @@ Flask-JWT-Extended
 psycopg2-binary
 flasgger
 prometheus-flask-exporter
+python-dotenv
