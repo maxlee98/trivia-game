@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s  # How often to scrape targets
+
+scrape_configs:
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['user-service:5001']  # User service metrics
+
+  - job_name: 'game-service'
+    static_configs:
+      - targets: ['game-service:5002']  # Game service metrics
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']  # Monitoring Prometheus itself

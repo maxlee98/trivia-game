@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from flasgger import Swagger
 from sqlalchemy.exc import IntegrityError
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -13,10 +14,15 @@ swagger = Swagger(app)
 # Docker Compose
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@postgres:5432/trivia_game'
 
+
 app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'  # Change this!
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+
+# Enable Prometheus Metrics
+metrics = PrometheusMetrics(app)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -6,6 +6,8 @@ services:
       - "5001:5001"
     depends_on:
       - postgres
+    environment:
+      - PROMETHEUS_SCRAPE=true  # Optional flag to identify Prometheus scraping
 
   
   game-service:
@@ -15,6 +17,8 @@ services:
       - "5002:5002"
     depends_on:
       - postgres
+    environment:
+      - PROMETHEUS_SCRAPE=true  # Optional flag to identify Prometheus scraping
 
 
   postgres:
@@ -29,5 +33,22 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
 
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090" # Exposes Prometheus UI on port 9090
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000" # Exposes Grafana dashboard on port 3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Default password for Grafana
+
 volumes:
   postgres_data:
+  grafana-data:

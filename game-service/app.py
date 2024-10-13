@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import Swagger
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -12,6 +13,9 @@ swagger = Swagger(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://new_user:new_password@postgres:5432/trivia_game'
 db = SQLAlchemy(app)
 
+# Enable Prometheus Metrics
+metrics = PrometheusMetrics(app)
+
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(200), nullable=False)
@@ -21,7 +25,7 @@ class Game(db.Model):
 with app.app_context():
     db.create_all()
 
-@app.route('/games', methods=['POST'])
+@app.route('/api/create_game', methods=['POST'])
 @jwt_required()
 def create_game():
     current_user = get_jwt_identity()
@@ -31,7 +35,7 @@ def create_game():
     db.session.commit()
     return jsonify({'message': 'Game created successfully'}), 201
 
-@app.route('/games', methods=['GET'])
+@app.route('/api/get_games', methods=['GET'])
 @jwt_required()
 def get_games():
     games = Game.query.all()
