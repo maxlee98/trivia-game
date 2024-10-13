@@ -25,8 +25,8 @@ services:
     image: postgres:17
     environment:
       POSTGRES_DB: trivia_game
-      POSTGRES_USER: new_user
-      POSTGRES_PASSWORD: new_password
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -48,7 +48,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin # Default password for Grafana
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_PASSWORD} # Default password for Grafana
 
 
   nginx:
