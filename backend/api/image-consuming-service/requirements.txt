@@ -1,0 +1,4 @@
+boto3==1.35.46
+kafka_python==2.0.2
+Pillow==11.0.0
+confluent_kafka==2.6.0

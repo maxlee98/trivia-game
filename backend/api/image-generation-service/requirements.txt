@@ -1,0 +1,7 @@
+flasgger==0.9.7.1
+Flask==3.0.3
+flask_sqlalchemy==3.1.1
+kafka_python==2.0.2
+Pillow==11.0.0
+prometheus_flask_exporter==0.23.1
+confluent_kafka==2.6.0

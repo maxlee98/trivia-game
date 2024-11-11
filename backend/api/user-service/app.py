@@ -8,12 +8,15 @@ from dotenv import load_dotenv
 import os
 
 # env_path = '../.env' # Local Testing
-env_path = '.env' # Docker Container
-load_dotenv(env_path)  # Load environment variables from the .env file
+# env_path = '.env' # Docker Container
+# load_dotenv(env_path)  # Load environment variables from the .env file
 
 # Now you can access your variables
-postgres_user = os.getenv('DB_USERNAME')
-postgres_password = os.getenv('DB_PASSWORD')
+# postgres_user = os.getenv('DB_USERNAME')
+# postgres_password = os.getenv('DB_PASSWORD')
+postgres_user = "new_user"
+postgres_password = "new_password"
+
 
 print("Postgres User:", postgres_user)
 print("Postgres Password:", postgres_password)

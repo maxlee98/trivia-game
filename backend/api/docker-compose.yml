@@ -1,0 +1,100 @@
+services:
+  user-service:
+    build:
+      context: ./user-service
+    volumes:
+      - .env:/app/.env   # Mount the .env file into the container
+    ports:
+      - "5001:5001"
+    # depends_on:
+    #   - postgres
+    environment:
+      - PROMETHEUS_SCRAPE=true  # Optional flag to identify Prometheus scraping
+
+
+
+  
+  game-service:
+    build:
+      context: ./game-service
+    volumes:
+      - .env:/app/.env  # Mount the .env file into the container
+    ports:
+      - "5002:5002"
+    # depends_on:
+    #   - postgres
+    environment:
+      - PROMETHEUS_SCRAPE=true  # Optional flag to identify Prometheus scraping
+
+
+
+  image-generation-service:
+    build:
+      context: ./image-generation-service
+    ports:
+      - "5003:5003"
+    # environment:
+    #   KAFKA_BOOTSTRAP_SERVERS: "kafka1:9092" # Update based on your Kafka configuration
+
+
+
+  image-consuming-service:
+    build:
+      context: ./image-consuming-service
+    # environment:
+    #   KAFKA_BOOTSTRAP_SERVERS: "kafka1:9092" # Update based on your Kafka configuration
+    #   BUCKET_NAME: "trivia-image-bucket"
+
+
+  # Port Assigned on Kafka
+  # postgres:
+  #   image: postgres:17
+  #   hostname: postgresql
+  #   environment:
+  #     POSTGRES_DB: trivia_game
+  #     POSTGRES_USER: new_user
+  #     POSTGRES_PASSWORD: new_password
+  #     POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+  #   ports:
+  #     - "5433:5433"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090" # Exposes Prometheus UI on port 9090
+
+
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000" # Exposes Grafana dashboard on port 3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Default password for Grafana
+
+
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Mount the configuration file
+    ports:
+      - "80:80"  # Expose port 80
+    depends_on:
+      - user-service
+      - game-service
+
+
+
+volumes:
+  postgres_data:
+  grafana-data:
+
+
